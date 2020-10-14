@@ -1,13 +1,13 @@
 <script>
+  import { currentPath } from "../../stores/currentPath"
   import { fileStructure } from "../../stores/fileStructure"
-  export let currentPath
 </script>
 
 { #each $fileStructure as file }
-  { #if file.filetype == "folder" }
+  { #if file.type == "folder" }
     <p class="folder">{ file.name }</p>
   { :else }
-    <p>{ file.name }.{ file.filetype }</p>
+    <p>{ file.name }.{ file.type }</p>
   { /if }
 { /each }
 

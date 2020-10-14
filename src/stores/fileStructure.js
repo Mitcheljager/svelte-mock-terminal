@@ -2,15 +2,15 @@ import { writable } from "svelte/store"
 
 const fileStructure = writable([
   {
-    name: "images", filetype: "folder", contents: [{
-      name: "subfolder", filetype: "folder"
+    name: "images", type: "folder", contents: [{
+      name: "subfolder", type: "folder"
     }, {
-      name: "image", filetype: "jpg"
+      name: "image", type: "jpg"
     }]
   }, {
-    name: "documents", filetype: "folder"
+    name: "documents", type: "folder"
   }, {
-    name: "file", filetype: "txt"
+    name: "file", type: "txt"
   }
 ])
 

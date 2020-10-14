@@ -2,71 +2,27 @@
 	import { readable, get } from "svelte/store"
 	import { lines } from "./stores/lines"
 	import { fileStructure } from "./stores/fileStructure"
-	import { availableCommands } from "./stores/availableCommands"
+	import { currentPath } from "./stores/currentPath"
 
-	import Undefined from "./components/commands/undefined.svelte"
-	import Welcome from "./components/commands/welcome.svelte"
-	import Help from "./components/commands/help.svelte"
+	import Input from "./components/Input.svelte"
+
+	import Undefined from "./components/commands/Undefined.svelte"
+	import Welcome from "./components/commands/Welcome.svelte"
+	import Help from "./components/commands/Help.svelte"
 	import Commands from "./components/commands/commands.svelte"
 	import Ls from "./components/commands/Ls.svelte"
 	import Clear from "./components/commands/Clear.svelte"
-
-	let currentPath = "\\"
-	let currentLine = $lines.length
-
-  function keepFocus() {
-		setTimeout(() => { this.focus() })
-  }
-
-	function handleKeypress() {
-		if (event.key == "Enter") submitLine(this)
-		if (event.key == "ArrowUp") lineUp(this)
-		if (event.key == "ArrowDown") lineDown(this)
-	}
-
-	function setInputValue(element, value) {
-		element.value = value
-
-		const boardContent = document.querySelector(".board__content")
-		setTimeout(() => { boardContent.scrollTop = boardContent.scrollHeight })
-	}
-
-	function submitLine(element) {
-		if (!element.value) return
-
-		const command = element.value.charAt(0).toUpperCase() + element.value.slice(1).toLowerCase()
-		$lines = [...$lines, { path: currentPath, content: element.value, component: $availableCommands.includes(command) ? command : "Undefined" }]
-
-		setInputValue(element, "")
-		currentLine = $lines.length
-	}
-
-	function lineUp(element) {
-		event.preventDefault()
-		if (currentLine <= 0) return
-
-		currentLine--
-		setInputValue(element, $lines[currentLine].content)
-	}
-
-	function lineDown(element) {
-		event.preventDefault()
-		if (currentLine >= $lines.length - 1) return
-
-		currentLine++
-		setInputValue(element, $lines[currentLine].content)
-	}
+	import Cd from "./components/commands/Cd.svelte"
 </script>
 
 <main class="board">
 	<div class="board__content">
 		{ #each $lines as line }
 			{ #if line.component }
-				<p class="line-content">\\Root{ line.path }{ line.content }</p>
+				<p class="line-content">//Root/{ line.path }{ line.content }</p>
 				<svelte:component
 					this={ eval(line.component) }
-					content={ line.content }
-					currentPath={ currentPath } />
+					content={ line.content } />
 			{ :else }
 				<p>{ line.content }</p>
 			{ /if }
@@ -74,8 +30,8 @@
 	</div>
 
 	<div class="board__footer">
-		<div class="board__path">\\Root{ currentPath }</div>
-		<input class="board__input" autofocus on:blur={ keepFocus } on:keydown={ handleKeypress } />
+		<div class="board__path">//Root/{ $currentPath }</div>
+		<Input />
 	</div>
 </main>
 
@@ -121,16 +77,7 @@
 
 	.board__path {
 		color: gray;
-	}
-
-	.board__input {
-		width: 100%;
-		line-height: 1rem;
-		background: black;
-		border: 0;
-		color: white;
-		font-family: "Consolas", monospace;
-		font-size: 1rem;
+		white-space: nowrap;
 	}
 
 	.line-content {
